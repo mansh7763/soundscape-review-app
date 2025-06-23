@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soundscape Music Review</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        color: #4a5568;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      .instructions {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border-left: 5px solid #667eea;
+      }
+
+      .instructions h2 {
+        color: #2d3748;
+        margin-bottom: 15px;
+        font-size: 1.4rem;
+      }
+
+      .instructions p {
+        line-height: 1.6;
+        color: #4a5568;
+        font-size: 1.1rem;
+      }
+
+      .audio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .audio-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .audio-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .audio-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .audio-player {
+        width: 100%;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .audio-player audio {
+        width: 100%;
+        height: 50px;
+      }
+
+      .rating-container {
+        margin-bottom: 20px;
+      }
+
+      .rating-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #4a5568;
+      }
+
+      .star-rating {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 15px;
+        justify-content: center;
+      }
+
+      .star {
+        font-size: 2rem;
+        color: #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+
+      .star:hover,
+      .star.active {
+        color: #ffd700;
+        transform: scale(1.1);
+      }
+
+      .rating-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        text-align: center;
+        transition: border-color 0.3s ease;
+      }
+
+      .rating-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .submitted {
+        background: #48bb78 !important;
+      }
+
+      .export-section {
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      .export-btn {
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0 10px;
+      }
+
+      .export-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+      }
+
+      .stats {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .stats h3 {
+        color: #2d3748;
+        margin-bottom: 10px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+      }
+
+      .stat-item {
+        background: rgba(102, 126, 234, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #667eea;
+      }
+
+      .stat-label {
+        color: #4a5568;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .audio-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .star {
+          font-size: 1.5rem;
+        }
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: #48bb78;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎵 Soundscape Music Review</h1>
+        <div class="instructions">
+          <h2>📋 Instructions</h2>
+          <p>
+            This application is collecting reviews for audio soundscapes. Please
+            play each audio file and rate the audio according to the title on a
+            scale of 0-5 (where 0 is poor and 5 is excellent). Your feedback
+            helps improve our soundscape generation algorithms.
+          </p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <h3>📊 Review Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number" id="totalReviews">0</div>
+            <div class="stat-label">Total Reviews</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="avgRating">0.0</div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="completionRate">0%</div>
+            <div class="stat-label">Completion Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="audio-grid" id="audioGrid">
+        <!-- Audio cards will be generated here -->
+      </div>
+
+      <!-- Export functionality removed for users -->
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+      // Sample audio data - replace with your actual audio files
+      const audioData = [
+        {
+          id: 1,
+          title: "Forest Ambience with Bird Songs",
+          description: "Natural forest sounds with chirping birds",
+          // Using a sample audio URL - replace with your actual audio files
+          audioUrl:
+            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaHYBUOg==",
+        },
+        {
+          id: 2,
+          title: "Ocean Waves with Seagulls",
+          description: "Relaxing ocean waves with distant seagull calls",
+          audioUrl:
+            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaHYBUOg==",
+        },
+        {
+          id: 3,
+          title: "Urban Nighttime Atmosphere",
+          description: "City sounds with distant traffic and ambience",
+          audioUrl:
+            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaHYBUOg==",
+        },
+        {
+          id: 4,
+          title: "Mountain Wind and Chimes",
+          description: "Gentle mountain breeze with wind chimes",
+          audioUrl:
+            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaHYBUOg==",
+        },
+        {
+          id: 5,
+          title: "Rainforest with Gentle Rain",
+          description: "Tropical rainforest ambience with light rainfall",
+          audioUrl:
+            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaHYBUOg==",
+        },
+        {
+          id: 6,
+          title: "Desert Evening Sounds",
+          description: "Peaceful desert ambience with nocturnal sounds",
+          audioUrl:
+            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaHYBUOg==",
+        },
+      ];
+
+      // Data storage
+      let reviewData = [];
+      let currentRatings = {};
+
+      // Initialize the application
+      async function initApp() {
+        renderAudioCards();
+        await loadExistingReviews();
+        updateStats();
+      }
+
+      // Render audio cards
+      function renderAudioCards() {
+        const audioGrid = document.getElementById("audioGrid");
+        audioGrid.innerHTML = "";
+
+        audioData.forEach((audio) => {
+          const card = createAudioCard(audio);
+          audioGrid.appendChild(card);
+        });
+      }
+
+      // Create individual audio card
+      function createAudioCard(audio) {
+        const card = document.createElement("div");
+        card.className = "audio-card";
+        card.innerHTML = `
+                <h3 class="audio-title">${audio.title}</h3>
+                <div class="audio-player">
+                    <audio controls>
+                        <source src="${audio.audioUrl}" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+                <div class="rating-container">
+                    <label class="rating-label">Rate this soundscape (0-5):</label>
+                    <div class="star-rating" data-audio-id="${audio.id}">
+                        ${[0, 1, 2, 3, 4, 5]
+                          .map(
+                            (star) =>
+                              `<span class="star" data-rating="${star}" onclick="setRating(${
+                                audio.id
+                              }, ${star})">${star === 0 ? "0" : "★"}</span>`
+                          )
+                          .join("")}
+                    </div>
+                    <input type="number" class="rating-input" id="rating-${
+                      audio.id
+                    }" 
+                           min="0" max="5" step="0.1" placeholder="Enter rating (0-5)" 
+                           onchange="updateRatingFromInput(${
+                             audio.id
+                           }, this.value)">
+                </div>
+                <button class="submit-btn" onclick="submitReview(${
+                  audio.id
+                })" id="submit-${audio.id}">
+                    Submit Review
+                </button>
+            `;
+        return card;
+      }
+
+      // Set rating from star click
+      function setRating(audioId, rating) {
+        currentRatings[audioId] = rating;
+        updateStarDisplay(audioId, rating);
+        document.getElementById(`rating-${audioId}`).value = rating;
+      }
+
+      // Update rating from input field
+      function updateRatingFromInput(audioId, rating) {
+        const numRating = Math.max(0, Math.min(5, parseFloat(rating) || 0));
+        currentRatings[audioId] = numRating;
+        updateStarDisplay(audioId, Math.round(numRating));
+        document.getElementById(`rating-${audioId}`).value = numRating;
+      }
+
+      // Update star display
+      function updateStarDisplay(audioId, rating) {
+        const stars = document.querySelectorAll(
+          `[data-audio-id="${audioId}"] .star`
+        );
+        stars.forEach((star, index) => {
+          star.classList.toggle("active", index <= rating && index > 0);
+        });
+      }
+
+      // Submit review to database
+      async function submitReview(audioId) {
+        const rating = currentRatings[audioId];
+        if (rating === undefined) {
+          showNotification(
+            "Please select a rating before submitting!",
+            "error"
+          );
+          return;
+        }
+
+        const audio = audioData.find((a) => a.id === audioId);
+        const review = {
+          audioId: audioId,
+          title: audio.title,
+          rating: rating,
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString(),
+          time: new Date().toLocaleTimeString(),
+          userAgent: navigator.userAgent,
+          sessionId: getSessionId(),
+        };
+
+        try {
+          const submitBtn = document.getElementById(`submit-${audioId}`);
+          submitBtn.textContent = "Submitting...";
+          submitBtn.disabled = true;
+
+          const response = await fetch("/api/reviews", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(review),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+
+            // Update local data for stats
+            reviewData = reviewData.filter((r) => r.audioId !== audioId);
+            reviewData.push({ ...review, id: result.id });
+
+            // Update button state
+            submitBtn.textContent = "Review Submitted ✓";
+            submitBtn.classList.add("submitted");
+
+            showNotification(
+              `Review submitted for "${audio.title}"!`,
+              "success"
+            );
+            updateStats();
+          } else {
+            throw new Error("Failed to submit review");
+          }
+        } catch (error) {
+          console.error("Error submitting review:", error);
+          showNotification(
+            "Failed to submit review. Please try again.",
+            "error"
+          );
+
+          // Reset button state
+          const submitBtn = document.getElementById(`submit-${audioId}`);
+          submitBtn.textContent = "Submit Review";
+          submitBtn.disabled = false;
+        }
+      }
+
+      // Generate or get session ID
+      function getSessionId() {
+        let sessionId = sessionStorage.getItem("reviewSessionId");
+        if (!sessionId) {
+          sessionId =
+            "session_" +
+            Date.now() +
+            "_" +
+            Math.random().toString(36).substr(2, 9);
+          sessionStorage.setItem("reviewSessionId", sessionId);
+        }
+        return sessionId;
+      }
+
+      // Update statistics
+      function updateStats() {
+        const totalReviews = reviewData.length;
+        const avgRating =
+          totalReviews > 0
+            ? (
+                reviewData.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+              ).toFixed(1)
+            : "0.0";
+        const completionRate = Math.round(
+          (totalReviews / audioData.length) * 100
+        );
+
+        document.getElementById("totalReviews").textContent = totalReviews;
+        document.getElementById("avgRating").textContent = avgRating;
+        document.getElementById("completionRate").textContent =
+          completionRate + "%";
+      }
+
+      // Show notification
+      function showNotification(message, type = "success") {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.style.background =
+          type === "success" ? "#48bb78" : "#f56565";
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Load existing reviews from database on startup
+      async function loadExistingReviews() {
+        try {
+          const sessionId = getSessionId();
+          const response = await fetch(`/api/reviews?sessionId=${sessionId}`);
+          if (response.ok) {
+            const data = await response.json();
+            reviewData = data.reviews || [];
+
+            // Update UI for already submitted reviews
+            reviewData.forEach((review) => {
+              const submitBtn = document.getElementById(
+                `submit-${review.audioId}`
+              );
+              if (submitBtn) {
+                submitBtn.textContent = "Review Submitted ✓";
+                submitBtn.classList.add("submitted");
+                submitBtn.disabled = true;
+
+                // Update rating display
+                currentRatings[review.audioId] = review.rating;
+                updateStarDisplay(review.audioId, Math.round(review.rating));
+                document.getElementById(`rating-${review.audioId}`).value =
+                  review.rating;
+              }
+            });
+
+            updateStats();
+          }
+        } catch (error) {
+          console.error("Error loading existing reviews:", error);
+        }
+      }
+
+      // Initialize the app when page loads
+      document.addEventListener("DOMContentLoaded", initApp);
+    </script>
+  </body>
+</html>
